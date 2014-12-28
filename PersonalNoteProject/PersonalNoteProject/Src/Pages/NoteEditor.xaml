@@ -1,0 +1,133 @@
+﻿<phone:PhoneApplicationPage xmlns:Controls="clr-namespace:Microsoft.Phone.Maps.Controls;assembly=Microsoft.Phone.Maps" 
+    x:Class="PersonalNoteProject.Src.Pages.NoteEditor"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+    <phone:PhoneApplicationPage.ApplicationBar>
+        <shell:ApplicationBar>
+            <shell:ApplicationBarIconButton Text="Save" IconUri="/Assets/AppBar/save.png" Click="ApplicationBarIconButton_Click"/>
+            <shell:ApplicationBarIconButton Text="Delete" IconUri="/Assets/AppBar/delete.png" Click="ApplicationBarIconButton_Click_1"/>
+            <shell:ApplicationBarIconButton Text="record" IconUri="/Assets/AppBar/record.png" Click="ApplicationBarIconButton_Click_2"/>
+            <shell:ApplicationBarIconButton Text="save" IconUri="/Assets/AppBar/stop.png" Click="ApplicationBarIconButton_Click_3"/>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem x:Name="ChoosePhoto" Text="Choose or Take a photo" Click="ChoosePhoto_Click"/>
+                <shell:ApplicationBarMenuItem x:Name="MappDownload" Text="Map downloader" Click="MappDownload_Click"/>
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </phone:PhoneApplicationPage.ApplicationBar>
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="OldLace">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="Personal Note Helper" Foreground ="Red" Style="{StaticResource PhoneTextNormalStyle}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <phone:Pivot x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0" Foreground="Crimson">
+            <phone:PivotItem Header="Detail" >
+                <StackPanel>
+                    <TextBlock Style="{StaticResource PhoneTextSubtleStyle}" Foreground="Crimson">Title</TextBlock>
+                    <toolkit:PhoneTextBox x:Name="titleBox"
+                     InputScope="Text"
+                     MaxLength="50"
+                     Hint="Name of Note"
+                     Text="{Binding Title}"  Foreground="Purple" BorderBrush="Red"/>
+                    <TextBlock Text="Description" Style="{StaticResource PhoneTextSubtleStyle}" Foreground="Crimson"/>
+                    <toolkit:PhoneTextBox x:Name="titleDescription" MaxLength="100" Hint="Enter your description" Foreground="Purple" BorderBrush="Red" TextWrapping="Wrap" Text="{Binding Content,Mode=TwoWay}" Height="200"/>
+                    <TextBlock Style="{StaticResource PhoneTextSubtleStyle}" Text="Keywords" Foreground="Red"/>
+                    <TextBox x:Name="titleKeywords" Text="{Binding Keywords}" Foreground="Crimson"/>
+
+
+                </StackPanel>
+
+            </phone:PivotItem>
+            <phone:PivotItem Header="Time-base">
+                <StackPanel>
+                    <toolkit:TimePicker x:Name="timePicker"
+                                Header="Time"
+                                Value="{Binding BeginTime, Mode=OneTime}" BorderBrush="Red" Foreground="Crimson" />
+                    <toolkit:DatePicker x:Name="datePicker"
+                                Header="Date"
+                                Value="{Binding BeginTime, Mode=OneTime}"  BorderBrush="Red" Foreground="Crimson"/>
+                    <toolkit:ListPicker x:Name="listPicker"
+                                Header="Occurs"
+                                SelectedItem="{Binding RecurrenceType, Mode=TwoWay}" BorderBrush="Red" Foreground="Crimson">
+                        <toolkit:ListPicker.FullModeItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <TextBlock Text="{Binding}" Foreground="Crimson"
+                                       Margin="{StaticResource PhoneTouchTargetOverhang}"
+                                       Style="{StaticResource PhoneTextLargeStyle}" />
+                                </Grid>
+                            </DataTemplate>
+                        </toolkit:ListPicker.FullModeItemTemplate>
+                    </toolkit:ListPicker>
+
+
+                </StackPanel>
+            </phone:PivotItem>
+            <phone:PivotItem Header="Location base">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Controls:Map x:Name="mapControl" Loaded="mapControl_Loaded" Hold="mapControl_Hold" Margin="0,0,0,77" Grid.RowSpan="2"  />
+                    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,193,0,0" >
+                       
+                        <Button x:Name="CalcualteButton" Content="Get the route" Click="CalcualteButton_Click" Width="400" HorizontalContentAlignment="Center" Foreground="Crimson" Background="SpringGreen" BorderBrush="Red"/>
+                    </StackPanel>
+                    <StackPanel Grid.Row="2" Orientation="Vertical">
+                        <toolkit:PhoneTextBox x:Name="SetDistanceTbx" Hint="Input the distance" Foreground="Purple" BorderBrush="Red" Background="White"/>
+                        <Button x:Name="StartTrackBtn" Content="Start track" Tap="StartTrackBtn_Tap" Foreground="Crimson" Background="SpringGreen" BorderBrush="Red"/>
+                        <Button x:Name="StopTrackBtn" Content="Stop track" Click="StopTrackBtn_Click" Foreground="Crimson" Background="SpringGreen" BorderBrush="Red"/>
+                    </StackPanel>
+                </Grid>
+
+            </phone:PivotItem>
+            <phone:PivotItem Header="Photo">
+                <Rectangle x:Name="photoContainer" Fill="Gray" />
+
+            </phone:PivotItem>
+            <phone:PivotItem Header="Record sound">
+                <phone:LongListSelector x:Name="recordingList">
+                    <phone:LongListSelector.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                    Margin="12">
+                                <Button Click="play_Click"
+                                    Tag="{Binding Title}"
+                                    Background="Black">
+                                    <Image Source="/Assets/AppBar/transport.play.png" />
+                                </Button>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="{Binding Title}"
+                                           FontSize="{StaticResource PhoneFontSizeLarge}" Foreground="Red" />
+                                    <TextBlock Text="{Binding Date, StringFormat='Recorded: \{0:g\}'}"
+                                           FontSize="{StaticResource PhoneFontSizeNormal}"  Foreground="Red"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </phone:LongListSelector.ItemTemplate>
+                </phone:LongListSelector>
+            </phone:PivotItem>
+        </phone:Pivot>
+    </Grid>
+
+</phone:PhoneApplicationPage>
